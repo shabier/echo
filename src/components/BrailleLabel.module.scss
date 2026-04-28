@@ -1,0 +1,31 @@
+.row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 1ch;
+  overflow: hidden;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.braille {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  letter-spacing: 0.04em;
+  font-style: normal;
+  font-size: 0.85em;
+  line-height: 1;
+  color: var(--braille-color, rgba(0, 0, 0, 0.3));
+  user-select: none;
+
+  &:first-child {
+    text-align: right;
+  }
+}
+
+.label {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-style: normal;
+}

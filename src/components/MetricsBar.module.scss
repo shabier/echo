@@ -1,0 +1,62 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  flex-wrap: wrap;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.engine {
+  font-weight: 500;
+}
+
+.stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.statLabel {
+  color: var(--text-tertiary);
+}
+
+.statValue {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.divider {
+  width: 1px;
+  height: 12px;
+  background: var(--border);
+}
+
+.context {
+  color: var(--text-tertiary);
+}
+
+.repoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-link);
+  text-decoration: none;
+  transition: color 120ms ease;
+
+  &:hover {
+    color: var(--accent-link-strong);
+  }
+}

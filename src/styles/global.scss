@@ -1,0 +1,69 @@
+:root {
+  --bg-page: #ffffff;
+  --bg-section: #f4f3f1;
+  --bg-card: #fdfcfa;
+  --bg-white: #ffffff;
+  --bg-pill: #faf7f1;
+  --bg-pill-hover: #f4f0e8;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #5b5852;
+  --text-tertiary: #8a8780;
+  --text-muted: #b8b5b0;
+  --text-disabled: #cdcac5;
+  --text-on-dark: #ffffff;
+
+  --border: #d8d6d2;
+  --border-soft: #d3d0ca;
+  --divider: #ebe9e6;
+
+  --overlay-04: rgba(0, 0, 0, 0.04);
+  --overlay-05: rgba(0, 0, 0, 0.05);
+  --overlay-06: rgba(0, 0, 0, 0.06);
+  --overlay-07: rgba(0, 0, 0, 0.07);
+  --overlay-08: rgba(0, 0, 0, 0.08);
+
+  --accent-error: #b3261e;
+  --accent-link: #6b5fa8;
+  --accent-link-strong: #4f4493;
+
+  --radius-card: 18px;
+  --radius-pill: 10px;
+  --radius-button: 5px;
+
+  --shadow-card:
+    0 1px 1px rgba(0, 0, 0, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.06),
+    0 16px 40px rgba(0, 0, 0, 0.04);
+
+  --pane-gap: 4px;
+
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}

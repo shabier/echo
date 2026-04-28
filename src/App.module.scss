@@ -1,0 +1,50 @@
+.app {
+  display: grid;
+  gap: var(--pane-gap);
+  min-height: 100dvh;
+  background: var(--bg-page);
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "left-pane"
+    "left-metrics"
+    "right-pane"
+    "right-metrics";
+
+  @media (min-width: 768px) {
+    height: 100dvh;
+    min-height: 0;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "left-pane    right-pane"
+      "left-metrics right-metrics";
+  }
+}
+
+.pane {
+  background: var(--bg-section);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow: auto;
+  min-height: 60dvh;
+
+  &:nth-of-type(1) { grid-area: left-pane; }
+  &:nth-of-type(2) { grid-area: right-pane; }
+
+  @media (min-width: 768px) {
+    padding: 32px;
+    min-height: 0;
+  }
+}
+
+.metricsLeft {
+  background: var(--bg-section);
+  grid-area: left-metrics;
+}
+
+.metricsRight {
+  background: var(--bg-section);
+  grid-area: right-metrics;
+}
