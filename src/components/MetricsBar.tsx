@@ -24,7 +24,6 @@ interface Props {
 }
 
 const cores = typeof navigator !== "undefined" ? navigator.hardwareConcurrency || 0 : 0;
-const hasWebGPU = typeof navigator !== "undefined" && "gpu" in navigator;
 
 export function MetricsBar({ side, asr, llm, tts }: Props) {
   if (side === "left") {
@@ -32,20 +31,15 @@ export function MetricsBar({ side, asr, llm, tts }: Props) {
       <div className={styles.bar}>
         <div className={styles.group}>
           <RepoLink href={REPO_URLS.asr} label="shabier/qwen3-asr.wasm on Github">shabier/qwen3-asr.wasm</RepoLink>
-          {asr && asr.totalMs > 0 && (
-            <>
-              <Stat label="t">{(asr.totalMs / 1000).toFixed(2)}s</Stat>
-              {asr.audioMs > 0 && (
-                <Stat label="rtf">{(asr.audioMs / asr.totalMs).toFixed(2)}×</Stat>
-              )}
-            </>
-          )}
+          {cores > 0 && <span className={styles.context}>{cores}-core CPU</span>}
         </div>
-        {cores > 0 && (
-          <>
-            <div className={styles.divider} />
-            <span className={styles.context}>{cores}-core CPU</span>
-          </>
+        {asr && asr.totalMs > 0 && (
+          <div className={styles.group}>
+            <Stat label="t">{(asr.totalMs / 1000).toFixed(2)}s</Stat>
+            {asr.audioMs > 0 && (
+              <Stat label="rtf">{(asr.audioMs / asr.totalMs).toFixed(2)}×</Stat>
+            )}
+          </div>
         )}
       </div>
     );
@@ -55,27 +49,26 @@ export function MetricsBar({ side, asr, llm, tts }: Props) {
     <div className={styles.bar}>
       <div className={styles.group}>
         <RepoLink href={REPO_URLS.llm} label="shabier/deltanet.wasm on Github">shabier/deltanet.wasm</RepoLink>
-        {llm && llm.elapsedMs > 0 && (
-          <>
-            <Stat label="tok/s">{(llm.tokens / (llm.elapsedMs / 1000)).toFixed(1)}</Stat>
-            <Stat label="t">{(llm.elapsedMs / 1000).toFixed(2)}s</Stat>
-          </>
-        )}
       </div>
-      {tts && tts.elapsedMs > 0 && (
-        <>
-          <div className={styles.divider} />
-          <div className={styles.group}>
-            <span className={styles.engine}>TTS</span>
-            {tts.durationMs > 0 && (
-              <Stat label="rtf">{(tts.durationMs / tts.elapsedMs).toFixed(2)}×</Stat>
-            )}
-            {tts.device && <Stat label="on">{tts.device}</Stat>}
-          </div>
-        </>
+      {((llm && llm.elapsedMs > 0) || (tts && tts.elapsedMs > 0)) && (
+        <div className={styles.group}>
+          {llm && llm.elapsedMs > 0 && (
+            <>
+              <Stat label="tok/s">{(llm.tokens / (llm.elapsedMs / 1000)).toFixed(1)}</Stat>
+              <Stat label="t">{(llm.elapsedMs / 1000).toFixed(2)}s</Stat>
+            </>
+          )}
+          {tts && tts.elapsedMs > 0 && (
+            <>
+              <span className={styles.engine}>TTS</span>
+              {tts.durationMs > 0 && (
+                <Stat label="rtf">{(tts.durationMs / tts.elapsedMs).toFixed(2)}×</Stat>
+              )}
+              {tts.device && <Stat label="on">{tts.device}</Stat>}
+            </>
+          )}
+        </div>
       )}
-      <div className={styles.divider} />
-      <span className={styles.context}>{hasWebGPU ? "WebGPU" : "WASM"}</span>
     </div>
   );
 }
