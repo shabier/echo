@@ -1,0 +1,572 @@
+.card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--fable-paper);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: min(560px, calc(100dvh - 64px));
+  color: var(--fable-ink);
+  position: relative;
+
+  @media (min-width: 768px) {
+    height: min(560px, calc(100dvh - 96px));
+  }
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  padding: 14px 22px;
+  gap: 10px;
+}
+
+.iconBtn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fable-ink-mute);
+  border-radius: var(--radius-button);
+  transition: color 200ms ease, background 200ms ease;
+
+  &:hover { color: var(--fable-ink); background: rgba(74, 73, 64, 0.05); }
+  &[data-shared="true"] { color: var(--fable-mark); }
+}
+
+.titleWrap {
+  text-align: center;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  color: var(--fable-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variation-settings: "opsz" 18;
+}
+
+// The page: three-track grid. Left rail = folio + reading rail. Center =
+// prose. Right rail = audio indicator + future marginalia. This is the
+// move that signals "considered layout" instead of "card with text in it."
+.book {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding: 14px 22px 18px;
+  font-family: var(--font-serif);
+  color: var(--fable-ink);
+
+  &::-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(74, 73, 64, 0.15);
+    border-radius: 4px;
+  }
+}
+
+// Left rail: folio numeral, then a hairline reading rail that fills with the
+// audio progress. Sticky so it stays visible as the prose scrolls past.
+.rail {
+  position: sticky;
+  top: 8px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 6px;
+  height: fit-content;
+}
+
+.folio {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--fable-ink-mute);
+  font-variation-settings: "opsz" 14;
+  font-variant-numeric: oldstyle-nums;
+}
+
+.railTrack {
+  width: 1px;
+  height: 220px;
+  background: var(--fable-rule-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.railFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--fable-mark);
+  height: var(--progress, 0%);
+  transition: height 720ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.railRight {
+  position: sticky;
+  top: 8px;
+  align-self: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6px;
+  color: var(--fable-ink-faint);
+  height: fit-content;
+}
+
+// Center column: the prose. Hangs punctuation, breathes with playback.
+.prose {
+  padding: 0 22px;
+  font-size: 17px;
+  line-height: 1.55;
+  hanging-punctuation: first last;
+  -webkit-hanging-punctuation: first last;
+  font-variation-settings: "opsz" 16, "SOFT" 30;
+  transition:
+    font-variation-settings 1200ms cubic-bezier(0.22, 1, 0.36, 1),
+    line-height 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  // When the narrator is actively reading, the page inhales: optical sizing
+  // grows, the soft axis relaxes, the leading opens. Awwwards-grade move per
+  // the research — nobody else is doing this.
+  &[data-playing="true"] {
+    font-variation-settings: "opsz" 22, "SOFT" 60;
+    line-height: 1.62;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+    padding: 0 26px;
+  }
+}
+
+.priorBeat {
+  color: var(--fable-ink-faint);
+  margin-bottom: 26px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  font-variation-settings: "opsz" 14;
+  transition: color 240ms ease;
+
+  &:hover { color: var(--fable-ink-mute); }
+}
+
+// Chosen-choice marker: indented italic, em-dash prefix (typographic, not
+// a UI arrow). Reads as a sotto-voce stage direction rather than a button
+// echo.
+.priorChoice {
+  color: var(--fable-ink-faint);
+  font-size: 12.5px;
+  margin: 6px 0 0 16px;
+  font-style: italic;
+  font-variation-settings: "opsz" 14;
+  position: relative;
+
+  &::before {
+    content: "—";
+    position: absolute;
+    left: -16px;
+    color: var(--fable-ink-mute);
+    font-style: normal;
+  }
+}
+
+.priorChoiceMark {
+  // Legacy class no longer rendered (mark moved to ::before).
+  display: none;
+}
+
+.currentBeat {
+  white-space: pre-wrap;
+  margin-bottom: 22px;
+  animation: pageEnter 720ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  // The single editorial signal: a drop cap on the first letter of the
+  // current beat. Set via initial-letter (modern), with a margin/float
+  // fallback for browsers that don't support it.
+  &::first-letter {
+    initial-letter: 3;
+    -webkit-initial-letter: 3;
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: 400;
+    color: var(--fable-ink);
+    font-variation-settings: "opsz" 72, "SOFT" 100, "WONK" 1;
+    padding-right: 0.06em;
+    margin-right: 0.04em;
+
+    @supports not (initial-letter: 3) {
+      float: left;
+      font-size: 3.4em;
+      line-height: 0.86;
+      margin: 0.04em 0.1em 0 -0.04em;
+    }
+  }
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+// Line-by-line crossfade: dim non-active lines to a fraction of full opacity.
+// No highlight fill. The reading rail in the margin does the locational work
+// the marker yellow used to do.
+.sentence {
+  color: var(--fable-ink);
+  opacity: 0.42;
+  transition: opacity 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sentenceRead { opacity: 0.78; }
+.sentenceActive { opacity: 1; }
+
+// Markdown emphasis. Italic stays italic, bold stays bold — printed type.
+// The earlier "ink-set on activation" effect read as inconsistent across
+// the page once the small model started producing asymmetric markdown.
+.em {
+  font-style: italic;
+  color: inherit;
+}
+
+.strong {
+  font-weight: 700;
+  color: inherit;
+}
+
+.blockquote {
+  display: block;
+  margin: 14px 0;
+  padding: 4px 0 4px 14px;
+  border-left: 1px solid var(--fable-mark);
+  font-style: italic;
+  color: var(--fable-ink-soft);
+  font-size: 0.95em;
+  line-height: 1.5;
+  font-variation-settings: "opsz" 14;
+}
+
+// Choices: marginalia voice. Numbered with italic numerals, italic prose
+// text, hairline underline draws on hover left-to-right.
+.choicesWrap {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.choicesLabel {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fable-ink-mute);
+  margin-bottom: 10px;
+}
+
+.choice {
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 7px 0;
+  font-family: var(--font-serif);
+  color: var(--fable-ink);
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px);
+  animation: choiceEnter 560ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-variation-settings: "opsz" 18, "SOFT" 40;
+
+  &:hover {
+    .choiceLabelInner { color: var(--fable-mark); }
+    .choiceUnderline { transform: scaleX(1); }
+    .choiceNumeral { color: var(--fable-mark); }
+  }
+
+  &:focus-visible {
+    outline: none;
+    .choiceUnderline { transform: scaleX(1); }
+  }
+
+  // Ink-set: when committed, the chosen choice locks in (full underline,
+  // mark color, scale settles) while siblings fade. The 360ms duration IS
+  // the undo window — research says "the animation is the undo affordance."
+  &[data-committed="true"] {
+    .choiceLabelInner { color: var(--fable-mark); }
+    .choiceUnderline { transform: scaleX(1); }
+    .choiceNumeral { color: var(--fable-mark); }
+    animation: inkSet 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  &[data-fading="true"] {
+    animation: choiceFade 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  // After commit, while the narrator reads this exact line: row pulses, so
+  // the user can see what the voice is saying. Layered on top of the
+  // data-committed visual.
+  &[data-narrating="true"] {
+    cursor: default;
+    .choiceLabelInner {
+      animation: choicePulse 1400ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+    .choiceUnderline {
+      animation: choiceUnderlinePulse 1400ms cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:nth-child(2) { animation-delay: 80ms; }
+  &:nth-child(3) { animation-delay: 220ms; }
+  &:nth-child(4) { animation-delay: 360ms; }
+}
+
+@keyframes inkSet {
+  0%   { transform: translateY(0) scale(1); }
+  40%  { transform: translateY(-1px) scale(1.002); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes choiceFade {
+  0%   { opacity: 1; transform: translateY(0); max-height: 80px; }
+  60%  { opacity: 0; transform: translateY(-4px); max-height: 80px; }
+  100% { opacity: 0; transform: translateY(-4px); max-height: 0; padding: 0; margin: 0; }
+}
+
+// Subtle pulse on the chosen line while the narrator reads it — the same
+// rhythm as breath, not a metronome. Just enough motion to anchor the eye.
+@keyframes choicePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.86; }
+}
+
+@keyframes choiceUnderlinePulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+@keyframes choiceEnter {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.choiceNumeral {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--fable-ink-mute);
+  align-self: baseline;
+  text-align: right;
+  padding-top: 2px;
+  font-variation-settings: "opsz" 14;
+  transition: color 240ms ease;
+}
+
+.choiceLabelWrap {
+  display: inline-block;
+  position: relative;
+}
+
+.choiceLabelInner {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  color: var(--fable-ink);
+  font-variation-settings: "opsz" 24, "SOFT" 60;
+  transition: color 240ms ease;
+}
+
+.choiceUnderline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--fable-mark);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+
+// Streaming preview: the prose of the next beat as it arrives from the LLM
+// during the hold period. Visually a softer, less-saturated copy of the
+// real currentBeat — when the real one mounts (page-turn), this fades away.
+.streamingBeat {
+  margin-top: 22px;
+  white-space: pre-wrap;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--fable-ink);
+  opacity: 0.62;
+  font-variation-settings: "opsz" 18, "SOFT" 50;
+  animation: streamingFadeIn 480ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+}
+
+@keyframes streamingFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 0.62; transform: translateY(0); }
+}
+
+.endNote {
+  margin-top: 36px;
+  padding: 22px 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 26px;
+  color: var(--fable-ink);
+  font-variation-settings: "opsz" 60, "SOFT" 100, "WONK" 1;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 280ms ease;
+
+  &:hover {
+    color: var(--fable-mark);
+    .endHint { color: var(--fable-mark); opacity: 1; }
+  }
+}
+
+.endHint {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fable-ink-mute);
+  opacity: 0.7;
+  transition: color 200ms ease, opacity 200ms ease;
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px 14px;
+}
+
+.barBtn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-button);
+  color: var(--fable-ink-soft);
+  transition: background 200ms ease, color 200ms ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(74, 73, 64, 0.06);
+    color: var(--fable-ink);
+  }
+
+  &:disabled {
+    color: var(--fable-ink-faint);
+    cursor: default;
+  }
+}
+
+.barMeta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--fable-ink-mute);
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+// Status pill: italic Fraunces text, no spinner. Three trailing dots fade
+// in sequence — quieter than a spinner, reads as "the page is thinking"
+// rather than "an HTTP request is loading."
+.statusPill {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--fable-ink-mute);
+  margin-top: 22px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  font-variation-settings: "opsz" 18, "SOFT" 50;
+}
+
+.statusDots {
+  display: inline-flex;
+  gap: 1px;
+  margin-left: 4px;
+}
+
+.statusDot {
+  font-style: italic;
+  animation: dotFade 1400ms ease-in-out infinite;
+
+  &:nth-child(1) { animation-delay: 0ms; }
+  &:nth-child(2) { animation-delay: 200ms; }
+  &:nth-child(3) { animation-delay: 400ms; }
+}
+
+@keyframes dotFade {
+  0%, 80%, 100% { opacity: 0.2; }
+  40% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .currentBeat,
+  .choice,
+  .sentence,
+  .priorBeat,
+  .railFill,
+  .em,
+  .strong,
+  .prose,
+  .titleUnderline,
+  .choiceUnderline,
+  .statusDot {
+    animation: none !important;
+    transition: none !important;
+  }
+}

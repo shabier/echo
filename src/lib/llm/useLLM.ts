@@ -35,6 +35,7 @@ export function useLLM() {
   const workerRef = useRef<Worker | null>(null);
   const onTokenRef = useRef<((token: string) => void) | null>(null);
   const onDoneRef = useRef<((text: string) => void) | null>(null);
+  const onErrorRef = useRef<((err: string) => void) | null>(null);
 
   useEffect(() => {
     const worker = new Worker(
@@ -77,17 +78,28 @@ export function useLLM() {
           onDoneRef.current?.(d.text);
           onTokenRef.current = null;
           onDoneRef.current = null;
+          onErrorRef.current = null;
           break;
         case "error":
           setState((s) => ({ ...s, phase: "error", error: d.message }));
+          // Surface the error to the in-flight caller so awaited promises
+          // settle. Previously these refs were just nulled and any callLLM()
+          // promise would hang forever.
+          onErrorRef.current?.(d.message);
           onTokenRef.current = null;
           onDoneRef.current = null;
+          onErrorRef.current = null;
           break;
       }
     };
 
     worker.onerror = (e) => {
-      setState((s) => ({ ...s, phase: "error", error: e.message || "Worker error" }));
+      const message = e.message || "Worker error";
+      setState((s) => ({ ...s, phase: "error", error: message }));
+      onErrorRef.current?.(message);
+      onTokenRef.current = null;
+      onDoneRef.current = null;
+      onErrorRef.current = null;
     };
 
     return () => {
@@ -113,13 +125,21 @@ export function useLLM() {
     (
       systemPrompt: string,
       messages: ChatMessage[],
-      handlers?: { onToken?: (t: string) => void; onDone?: (text: string) => void },
+      handlers?: {
+        onToken?: (t: string) => void;
+        onDone?: (text: string) => void;
+        onError?: (err: string) => void;
+      },
       maxTokens = 512,
     ) => {
-      if (!workerRef.current) return;
+      if (!workerRef.current) {
+        handlers?.onError?.("Worker not ready");
+        return;
+      }
       setState((s) => ({ ...s, phase: "generating", streamingText: "", error: "" }));
       onTokenRef.current = handlers?.onToken ?? null;
       onDoneRef.current = handlers?.onDone ?? null;
+      onErrorRef.current = handlers?.onError ?? null;
       workerRef.current.postMessage({
         type: "generate",
         data: { systemPrompt, messages, maxTokens },

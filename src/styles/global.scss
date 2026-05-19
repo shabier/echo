@@ -39,7 +39,38 @@
   --pane-gap: 4px;
 
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
-  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Inter Tight", -apple-system, BlinkMacSystemFont, "Inter",
+    "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino,
+    "Cambria", "Hoefler Text", Georgia, serif;
+
+  // Fable runs on a cool-archival neutral, escaping the warm-paper-and-black
+  // default that reads as "AI reading app" in 2026. One accent (oxide red),
+  // used only for state — reading rail, active choice underline, folio at
+  // the current page.
+  --fable-paper: #ecebe6;
+  --fable-paper-edge: #e3e2dc;
+  --fable-card: #f4f3ef;
+  --fable-card-hover: #efeee9;
+  --fable-ink: #18170f;
+  --fable-ink-soft: #4a4940;
+  --fable-ink-mute: #7e7d72;
+  --fable-ink-faint: #b8b6ab;
+  --fable-rule: #d0cec2;
+  --fable-rule-soft: #dedcd0;
+  --fable-mark: #b94a2a;
+  --fable-highlight: #b94a2a;
+
+  // Motion. Use these instead of inventing new curves per component.
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-stage: cubic-bezier(0.16, 1, 0.3, 1);
+
+  // Backwards-compatible aliases for components that still reference the
+  // older Fable tokens. New work should use the --fable-* names above.
+  --bg-paper: var(--fable-paper);
+  --bg-card-hover: var(--fable-card-hover);
+  --highlight: var(--fable-highlight);
 }
 
 * {
@@ -57,6 +88,7 @@ body {
   background: var(--bg-page);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 button {

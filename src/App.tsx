@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LeftPane } from "./components/LeftPane";
-import { RightPane } from "./components/RightPane";
+import { FablePane } from "./components/fable/FablePane";
 import {
   MetricsBar,
   type ASRMetrics,
@@ -10,8 +10,8 @@ import {
 import styles from "./App.module.scss";
 
 export function App() {
-  const [transcript, setTranscript] = useState("");
-  const [hasAudio, setHasAudio] = useState(false);
+  const [, setTranscript] = useState("");
+  const [, setHasAudio] = useState(false);
   const [asrMetrics, setAsrMetrics] = useState<ASRMetrics | null>(null);
   const [llmMetrics, setLlmMetrics] = useState<LLMMetrics | null>(null);
   const [ttsMetrics, setTtsMetrics] = useState<TTSMetrics | null>(null);
@@ -26,12 +26,7 @@ export function App() {
         />
       </section>
       <section className={styles.pane}>
-        <RightPane
-          transcript={transcript}
-          hasAudio={hasAudio}
-          onLLMMetrics={setLlmMetrics}
-          onTTSMetrics={setTtsMetrics}
-        />
+        <FablePane onLLMMetrics={setLlmMetrics} onTTSMetrics={setTtsMetrics} />
       </section>
       <footer className={styles.metricsLeft}>
         <MetricsBar side="left" asr={asrMetrics} />
